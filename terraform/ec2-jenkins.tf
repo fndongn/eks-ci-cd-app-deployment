@@ -6,6 +6,17 @@ resource "aws_instance" "ec2-jenkins" {
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.jenkins_ec2_profile.name
   key_name               = var.key_name
+  
+   # Increase root volume size
+  root_block_device {
+    volume_size = 20     # size in GB
+    volume_type = "gp3"  # General Purpose SSD
+    delete_on_termination = true
+
+  tags = {
+    Name = "${var.project_name}-ec2-jenkins"
+  }
+}
 
   tags = {
     Name = "${var.project_name}-ec2-jenkins"

@@ -2,32 +2,35 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION     = "us-east-1"
-        AWS_ACCOUNT_ID = "396044748166"
-        ECR_REPO       = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/eks-deployment-hello-world"
-        CLUSTER_NAME   = "eks-deployment-cluster"
-        IMAGE_TAG      = "latest"
+        ECR_REPO = '396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world'
+        IMAGE_TAG = "latest"
+        CLUSTER_NAME = "eks-deployment-cluster"
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout your GitHub repo using your credentials
+                git branch: 'main', url: 'https://github.com/fndongn/eks-ci-cd-app-deployment.git', credentialsId: 'github-PAT'
+            }
+        }
 
         stage('Build Docker Image') {
-  steps {
-    sh '''
-      cd app
-      docker build -t helloworld-app:${IMAGE_TAG} .
-    '''
-  }
-}
-
+            steps {
+                // Move into the app folder where Dockerfile exists
+                dir('app') {
+                    sh 'docker build -t helloworld-app:${IMAGE_TAG} .'
+                }
+            }
+        }
 
         stage('Login to Amazon ECR') {
             steps {
                 sh '''
-                aws ecr get-login-password --region us-east-1 \
-                | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+                aws ecr get-login-password --region us-east-1 | \
+                docker login --username AWS --password-stdin ${ECR_REPO}
                 '''
-            } 
+            }
         }
 
         stage('Push Image to ECR') {
@@ -42,13 +45,28 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 sh '''
-              
-  aws eks update-kubeconfig --region us-east-1 --name ${CLUSTER_NAME}
-                kubectl set image deployment/helloworld-app \
-                  helloworld-app=${ECR_REPO}:${IMAGE_TAG}
-                kubectl rollout status deployment/helloworld-app
+                # Use a temporary kubeconfig to avoid permission issues
+                export KUBECONFIG=/tmp/kubeconfig
+
+                # Update kubeconfig for your cluster
+                aws eks update-kubeconfig --region us-east-1 --name ${CLUSTER_NAME} --kubeconfig $KUBECONFIG
+
+                # Update the deployment image
+                kubectl set image deployment/helloworld-app helloworld-app=${ECR_REPO}:${IMAGE_TAG} --kubeconfig $KUBECONFIG
+
+                # Wait for rollout to finish
+                kubectl rollout status deployment/helloworld-app --kubeconfig $KUBECONFIG
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Check logs for errors."
         }
     }
 }

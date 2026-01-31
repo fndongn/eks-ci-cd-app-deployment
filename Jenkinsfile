@@ -11,17 +11,15 @@ pipeline {
 
     stages {
 
-        stage('Get Code from GitHub') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t helloworld-app:${IMAGE_TAG} .'
-            }
-        }
+  steps {
+    sh '''
+      cd app
+      docker build -t helloworld-app:${IMAGE_TAG} .
+    '''
+  }
+}
+
 
         stage('Login to Amazon ECR') {
             steps {

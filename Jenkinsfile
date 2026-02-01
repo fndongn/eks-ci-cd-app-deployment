@@ -12,11 +12,12 @@ pipeline {
     stages {
 
         stage('Checkout') {
-            steps {
-                // Checkout your GitHub repo
-                git branch: 'main', url: 'https://github.com/fndongn/eks-ci-cd-app-deployment.git'
-            }
-        }
+    steps {
+        git branch: 'main', 
+            url: 'https://github.com/fndongn/eks-ci-cd-app-deployment.git', 
+            credentialsId: 'github-PAT'
+    }
+}
 
         stage('Build Docker Image') {
             steps {

@@ -14,9 +14,11 @@ spec:
     spec:
       containers:
         - name: helloworld-app
-          image: 396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world
+          image: 396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
+
           resources:
             requests:
               cpu: "100m"
@@ -25,21 +27,16 @@ spec:
               cpu: "500m"
               memory: "512Mi"
 
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: helloworld-app-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: helloworld-app
-  minReplicas: 1
-  maxReplicas: 12
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20

@@ -5,11 +5,9 @@ resource "aws_iam_role" "eks_cluster" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "eks.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "eks.amazonaws.com" }
+      Action    = "sts:AssumeRole"
     }]
   })
 
@@ -18,18 +16,15 @@ resource "aws_iam_role" "eks_cluster" {
   }
 }
 
-# Attach required policies to EKS cluster role
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   role       = aws_iam_role.eks_cluster.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_vpc_policy" {
   role       = aws_iam_role.eks_cluster.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
 }
-
-
 
 # EKS NODE GROUP IAM ROLE
 resource "aws_iam_role" "eks_node" {
@@ -38,11 +33,9 @@ resource "aws_iam_role" "eks_node" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
     }]
   })
 
@@ -51,75 +44,60 @@ resource "aws_iam_role" "eks_node" {
   }
 }
 
-# Attach required node policies
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
   role       = aws_iam_role.eks_node.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
   role       = aws_iam_role.eks_node.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_ecr_readonly" {
   role       = aws_iam_role.eks_node.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_cloudwatch" {
-  role       = aws_iam_role.eks_node.name
-  policy_arn  = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
 
-# JENKINS EC2 IAM ROLE (CI/CD)
+# JENKINS EC2 IAM ROLE
 resource "aws_iam_role" "jenkins_role" {
   name = "${var.project_name}-jenkins-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
     }]
   })
-
-  tags = {
-    Environment = var.environment
-  }
 }
 
-# Jenkins needs full ECR push/pull
+# Jenkins → Push to ECR
 resource "aws_iam_role_policy_attachment" "jenkins_ecr" {
   role       = aws_iam_role.jenkins_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
 }
 
-# Jenkins needs EKS access to deploy apps
-resource "aws_iam_role_policy_attachment" "jenkins_eks_access" {
+# Jenkins → EKS access
+resource "aws_iam_role_policy_attachment" "jenkins_eks" {
   role       = aws_iam_role.jenkins_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
-# Jenkins can manage kubectl operations
-resource "aws_iam_role_policy_attachment" "jenkins_worker_policy" {
+resource "aws_iam_role_policy_attachment" "jenkins_eks_service" {
   role       = aws_iam_role.jenkins_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 
-# Jenkins logs + monitoring
-resource "aws_iam_role_policy_attachment" "jenkins_cloudwatch" {
+resource "aws_iam_role_policy_attachment" "jenkins_ec2_read" {
   role       = aws_iam_role.jenkins_role.name
-  policy_arn  = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
 }
 
-
-# INSTANCE PROFILE FOR JENKINS EC2
+# JENKINS INSTANCE PROFILE
 resource "aws_iam_instance_profile" "jenkins_ec2_profile" {
-  name = "${var.project_name}-jenkins-instance-profile"
+  name = "${var.project_name}-jenkins-profile"
   role = aws_iam_role.jenkins_role.name
 }

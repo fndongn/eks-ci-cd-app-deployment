@@ -20,10 +20,12 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // Build Docker image from root or app folder
-                sh """
-                docker build -t ${DOCKER_IMAGE} .
-                """
+                // Build Docker image from the app folder
+                dir('app') {
+                    sh """
+                    docker build -t ${DOCKER_IMAGE} .
+                    """
+                }
             }
         }
 

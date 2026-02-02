@@ -5,7 +5,7 @@ pipeline {
         AWS_REGION   = "us-east-1"
         CLUSTER_NAME = "eks-deployment-cluster"
         ECR_REPO     = "396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world"
-        IMAGE_TAG    = "${env.GIT_COMMIT.take(7)}"
+        IMAGE_TAG    = "v1.0.${env.BUILD_NUMBER}"
         DOCKER_IMAGE = "helloworld-app:${IMAGE_TAG}"
     }
 

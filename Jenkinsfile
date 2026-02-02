@@ -7,16 +7,13 @@ pipeline {
         ECR_REPO     = "396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world"
         IMAGE_TAG    = "latest"
         DOCKER_IMAGE = "helloworld-app:${IMAGE_TAG}"
-        KUBECONFIG   = "/root/.kube/config"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/fndongn/eks-ci-cd-app-deployment.git',
-                    credentialsId: 'github-PAT'
+                checkout scm
             }
         }
 
@@ -49,9 +46,12 @@ pipeline {
         stage('Configure kubeconfig') {
             steps {
                 sh '''
+                export KUBECONFIG=/tmp/kubeconfig
+
                 aws eks update-kubeconfig \
                   --region ${AWS_REGION} \
-                  --name ${CLUSTER_NAME}
+                  --name ${CLUSTER_NAME} \
+                  --kubeconfig $KUBECONFIG
                 '''
             }
         }
@@ -59,15 +59,19 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 sh '''
-                # Apply manifests (safe to run multiple times)
-                kubectl apply -f k8s/
+                export KUBECONFIG=/tmp/kubeconfig
 
-                # Update image
+                # Apply manifests (idempotent)
+                kubectl apply -f k8s/ --kubeconfig $KUBECONFIG
+
+                # Update deployment image
                 kubectl set image deployment/helloworld-app \
-                  helloworld-app=${ECR_REPO}:${IMAGE_TAG}
+                  helloworld-app=${ECR_REPO}:${IMAGE_TAG} \
+                  --kubeconfig $KUBECONFIG
 
                 # Wait for rollout
-                kubectl rollout status deployment/helloworld-app
+                kubectl rollout status deployment/helloworld-app \
+                  --kubeconfig $KUBECONFIG
                 '''
             }
         }
@@ -78,7 +82,7 @@ pipeline {
             echo " Pipeline completed successfully!"
         }
         failure {
-            echo "Pipeline failed. Check logs."
+            echo " Pipeline failed. Check logs."
         }
     }
 }

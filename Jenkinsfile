@@ -5,17 +5,11 @@ pipeline {
         AWS_REGION   = "us-east-1"
         CLUSTER_NAME = "eks-deployment-cluster"
         ECR_REPO     = "396044748166.dkr.ecr.us-east-1.amazonaws.com/eks-deployment-hello-world"
-        IMAGE_TAG    = "latest"
+        IMAGE_TAG    = "${env.GIT_COMMIT.take(7)}"
         DOCKER_IMAGE = "helloworld-app:${IMAGE_TAG}"
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Build Docker Image') {
             steps {
@@ -47,7 +41,6 @@ pipeline {
             steps {
                 sh '''
                 export KUBECONFIG=/tmp/kubeconfig
-
                 aws eks update-kubeconfig \
                   --region ${AWS_REGION} \
                   --name ${CLUSTER_NAME} \
@@ -61,17 +54,10 @@ pipeline {
                 sh '''
                 export KUBECONFIG=/tmp/kubeconfig
 
-                # Apply manifests (idempotent)
-                kubectl apply -f k8s/ --kubeconfig $KUBECONFIG
-
-                # Update deployment image
+                kubectl apply -f k8s/
                 kubectl set image deployment/helloworld-app \
-                  helloworld-app=${ECR_REPO}:${IMAGE_TAG} \
-                  --kubeconfig $KUBECONFIG
-
-                # Wait for rollout
-                kubectl rollout status deployment/helloworld-app \
-                  --kubeconfig $KUBECONFIG
+                  helloworld-app=${ECR_REPO}:${IMAGE_TAG}
+                kubectl rollout status deployment/helloworld-app
                 '''
             }
         }
@@ -79,10 +65,10 @@ pipeline {
 
     post {
         success {
-            echo " Pipeline completed successfully!"
+            echo "Pipeline completed successfully!"
         }
         failure {
-            echo " Pipeline failed. Check logs."
+            echo "Pipeline failed. Check logs."
         }
     }
 }

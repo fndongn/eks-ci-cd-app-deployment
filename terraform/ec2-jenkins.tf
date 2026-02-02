@@ -1,3 +1,9 @@
+# Jenkins EC2 IAM Instance Profile
+resource "aws_iam_instance_profile" "jenkins_ec2_profile" {
+  name = "${var.project_name}-jenkins-instance-profile"
+  role = aws_iam_role.jenkins_role.name
+}
+
 # Jenkins EC2 Instance
 resource "aws_instance" "ec2_jenkins" {
   ami                    = data.aws_ami.amazon_linux_2023.id
@@ -13,8 +19,12 @@ resource "aws_instance" "ec2_jenkins" {
     delete_on_termination = true
   }
 
+  # Optional: enable public IP if subnet is public
+  associate_public_ip_address = true
+
   tags = {
-    Name = "${var.project_name}-ec2-jenkins"
+    Name        = "${var.project_name}-ec2-jenkins"
+    Environment = var.environment
   }
 }
 

@@ -28,24 +28,24 @@ resource "aws_internet_gateway" "eksvpc_igw" {
 # Used for ALB and NAT Gateways
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.eksvpc.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = "us-east-1a"
+  cidr_block              = var.subnet_cidr
+  availability_zone       = var.az_a
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "eks-public-us-east-1a"
+    Name = "eks-public-${var.az_a}"
     "kubernetes.io/role/elb" = "1"
   }
 }
 
 resource "aws_subnet" "public_b" {
   vpc_id                  = aws_vpc.eksvpc.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-east-1b"
+  cidr_block              = var.subnet_cidr
+  availability_zone       = var.az_b
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "eks-public-us-east-1b"
+    Name = "eks-public-${var.az_b}"
     "kubernetes.io/role/elb" = "1"
   }
 }
@@ -96,7 +96,7 @@ resource "aws_nat_gateway" "nat_a" {
   subnet_id     = aws_subnet.public_a.id
 
   tags = {
-    Name = "eks-nat-us-east-1a"
+    Name = "eks-nat-${var.az_a}"
   }
 }
 
@@ -105,7 +105,7 @@ resource "aws_nat_gateway" "nat_b" {
   subnet_id     = aws_subnet.public_b.id
 
   tags = {
-    Name = "eks-nat-us-east-1b"
+    Name = "eks-nat-${var.az_b}"
   }
 }
 
@@ -113,22 +113,22 @@ resource "aws_nat_gateway" "nat_b" {
 # Used by EKS worker nodes
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.eksvpc.id
-  cidr_block        = "10.0.101.0/24"
-  availability_zone = "us-east-1a"
+  cidr_block        = var.subnet_cidr
+  availability_zone = var.az_a
 
   tags = {
-    Name = "eks-private-us-east-1a"
+    Name = "eks-private-${var.az_a}"
     "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
 resource "aws_subnet" "private_b" {
   vpc_id            = aws_vpc.eksvpc.id
-  cidr_block        = "10.0.102.0/24"
-  availability_zone = "us-east-1b"
+  cidr_block        = var.subnet_cidr
+  availability_zone = var.az_b
 
   tags = {
-    Name = "eks-private-us-east-1b"
+    Name = "eks-private-${var.az_b}"
     "kubernetes.io/role/internal-elb" = "1"
   }
 }

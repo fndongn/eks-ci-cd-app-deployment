@@ -5,7 +5,7 @@ Automated deployment pipeline for containerized web applications to AWS EKS usin
 Application: Simple Flask app displaying "Hello, World!"
 Infrastructure:
 
-  - EKS cluster with 4 auto-scaling nodes (1-4 nodes, t3.small)
+  - EKS cluster with 4 auto-scaling nodes (1-4 nodes)
   - Application Load Balancer for traffic distribution
   - Horizontal Pod Autoscaler (1-3 pods per node, 50% CPU/memory triggers)
 
@@ -47,3 +47,6 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - Resource Waste - Scales down during low traffic to reduce costs
   - Slow Releases - Reduces deployment from hours to minutes
   - Traceability - Git commit-based versioning enables easy rollbacks
+
+# 7. Architecture Diagram
+<img width="3082" height="1789" alt="ARCHITECTURE DIAGRAM" src="https://github.com/user-attachments/assets/1066aff8-5f66-48a2-b629-c52dfbacd7dd" />

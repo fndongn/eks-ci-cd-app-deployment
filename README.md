@@ -49,4 +49,5 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - Traceability - Git commit-based versioning enables easy rollbacks
 
 # 7. Architecture Diagram
-<img width="3082" height="1789" alt="ARCHITECTURE DIAGRAM" src="https://github.com/user-attachments/assets/1066aff8-5f66-48a2-b629-c52dfbacd7dd" />
+<img width="3151" height="1932" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/45bcd60f-bdb5-4358-a8dd-6db5c941c2ee" />
+

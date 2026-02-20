@@ -1,7 +1,10 @@
 # 1. Project Overview
 Automated deployment pipeline for containerized web applications to AWS EKS using Jenkins. Infrastructure is       provisioned with Terraform, following modern DevOps practices including infrastructure as code, containerization, and   continuous deployment.
 
-# 2. What It Does
+# 2. Architecture Diagram
+<img width="3151" height="1932" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/45bcd60f-bdb5-4358-a8dd-6db5c941c2ee" />
+
+# 3. What It Does
 Application: Simple Flask app displaying "Hello, World!"
 Infrastructure:
 
@@ -11,14 +14,14 @@ Infrastructure:
 
 Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push to ECR, and deploy to EKS with zero downtime.
 
-# 3. How It Works
+# 4. How It Works
   - Provisioning: Terraform creates VPC, EKS cluster, nodes, security groups, IAM roles, and ECR repository.
   - Containerization: Flask app packaged in Docker for portability and consistency.
   - Orchestration: Kubernetes manages containers across nodes with automatic failure recovery.
   - Scaling: Nodes scale based on resource demand; pods scale when CPU or memory exceeds 50%.
   - Load Balancing: ALB distributes traffic across application pods.
 
-# 4. CI/CD Workflow (Jenkins)
+# 5. CI/CD Workflow (Jenkins)
   - Checkout → Pull latest code from GitHub
   - Build → Create Docker image tagged with Git commit hash
   - Login to ECR → Authenticate with AWS container registry
@@ -27,7 +30,7 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - Deploy to EKS → Rolling update with new image
   - Pipeline triggers automatically on push to main branch.
     
-# 5. Key Technologies
+# 6. Key Technologies
 
   - AWS EKS - Managed Kubernetes service
   - Terraform - Infrastructure as Code
@@ -39,7 +42,7 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - ALB - Application Load Balancer
   - HPA - Horizontal Pod Autoscaler
 
-# 6. Problem It Solves
+# 7. Problem It Solves
   - Manual Deployment - Automates build and deployment, reducing errors and time
   - Scalability - Handles traffic spikes automatically without over-provisioning
   - Inconsistency - Ensures identical environments across development and production
@@ -48,6 +51,5 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - Slow Releases - Reduces deployment from hours to minutes
   - Traceability - Git commit-based versioning enables easy rollbacks
 
-# 7. Architecture Diagram
-<img width="3151" height="1932" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/45bcd60f-bdb5-4358-a8dd-6db5c941c2ee" />
+
 

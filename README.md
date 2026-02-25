@@ -30,7 +30,7 @@ Automation: Code pushed to GitHub triggers Jenkins to build Docker images, push 
   - Deploy to EKS → Rolling update with new image
   - Pipeline triggers automatically on push to main branch.
     
-# 6. Key Technologies
+# 6. Tech stacks
 
   - AWS EKS - Managed Kubernetes service
   - Terraform - Infrastructure as Code

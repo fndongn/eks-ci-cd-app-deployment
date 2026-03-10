@@ -3,6 +3,8 @@ This project demonstrates an automated CI/CD pipeline for deploying containerize
 Infrastructure is provisioned using Terraform, while Jenkins automates the build and deployment process, following modern DevOps practices such as Infrastructure as Code (IaC), containerization, and continuous deployment.
 The pipeline enables fully automated, scalable, and zero-downtime deployments of a Dockerized Flask application to Kubernetes.
 
+This project demonstrates a production-style DevOps pipeline that integrates Terraform, Jenkins, Docker, Kubernetes, and AWS services to deliver a scalable, automated, and reliable cloud deployment architecture.
+
 # 2. Architecture Diagram
 <img width="3151" height="1932" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/45bcd60f-bdb5-4358-a8dd-6db5c941c2ee" />
 

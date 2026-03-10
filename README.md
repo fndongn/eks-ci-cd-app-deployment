@@ -34,7 +34,7 @@ The pipeline enables fully automated, scalable, and zero-downtime deployments of
   * Amazon ECR repository
 
   Containerization
-    * The Flask application is packaged into a Docker container, ensuring consistent environments across development and production.
+  * The Flask application is packaged into a Docker container, ensuring consistent environments across development and production.
 
   Orchestration
   Kubernetes (EKS) manages container scheduling, scaling, and self-healing across worker nodes.

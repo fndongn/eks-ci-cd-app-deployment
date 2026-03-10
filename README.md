@@ -42,7 +42,7 @@ The deployment uses Kubernetes rolling updates, ensuring the application remains
   * The Flask application is packaged into a Docker container, ensuring consistent environments across development and production.
 
   Orchestration
-  Kubernetes (EKS) manages container scheduling, scaling, and self-healing across worker nodes.
+  * Kubernetes (EKS) manages container scheduling, scaling, and self-healing across worker nodes.
 
   Auto Scaling
   * Node scaling: 1–4 EC2 nodes based on resource demand

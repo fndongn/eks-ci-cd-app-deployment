@@ -6,6 +6,7 @@ Automated deployment pipeline for containerized web applications to AWS EKS usin
 
 # 3. What It Does
 Application: Simple Flask app displaying "Hello, World!"
+
 Infrastructure:
 
   - EKS cluster with 4 auto-scaling nodes (1-4 nodes)

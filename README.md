@@ -25,13 +25,13 @@ The pipeline enables fully automated, scalable, and zero-downtime deployments of
 
 # 4. How It Works
   Infrastructure Provisioning
-    Terraform provisions the complete AWS environment, including:
-      * VPC and networking
-      * EKS cluster
-      * Worker nodes
-      * Security groups
-      * IAM roles
-      * Amazon ECR repository
+  Terraform provisions the complete AWS environment, including:
+  * VPC and networking
+  * EKS cluster
+  * Worker nodes
+  * Security groups
+  * IAM roles
+  * Amazon ECR repository
 
   Containerization
     * The Flask application is packaged into a Docker container, ensuring consistent environments across development and production.

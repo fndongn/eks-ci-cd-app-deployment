@@ -9,21 +9,24 @@ This project demonstrates a production-style DevOps pipeline that integrates Ter
 <img width="3151" height="1932" alt="Architecture Diagram" src="https://github.com/user-attachments/assets/45bcd60f-bdb5-4358-a8dd-6db5c941c2ee" />
 
 # 3. What It Does
-  Infrastructure
-  * Amazon EKS Cluster
-    - Node Group auto-scaling from 1–4 nodes
-  * Application Load Balancer (ALB)
-    - Distributes incoming traffic across pods
-  * Horizontal Pod Autoscaler (HPA)
-    - Scales pods 1–3 per node
-    - Triggered at 50% CPU or Memory utilization
+This project demonstrates an automated CI/CD pipeline that deploys a containerized web application to Amazon EKS with built-in scalability and zero-downtime updates.
 
-  Automation
-  When code is pushed to GitHub, the Jenkins pipeline automatically:
-  * Builds a Docker image
-  * Pushes the image to Amazon ECR
-  * Deploys the application to Amazon EKS using a rolling update
-  This ensures zero-downtime deployments.
+Infrastructure
+* Amazon EKS Cluster
+  - Hosts the Kubernetes environment where the application runs.
+* Auto-Scaling Node Group
+  - Worker nodes automatically scale between 1–4 EC2 instances based on workload demand.
+* Application Load Balancer (ALB)
+  - Routes external traffic and distributes requests across running application pods.
+* Horizontal Pod Autoscaler (HPA)
+  - Automatically scales the application pods between 1–3 per node when CPU or memory usage exceeds 50%.
+
+Automation
+When code is pushed to GitHub, the Jenkins CI/CD pipeline automatically:
+* Builds a Docker image of the application
+* Pushes the image to Amazon ECR
+* Deploys the new version to Amazon EKS
+The deployment uses Kubernetes rolling updates, ensuring the application remains available during releases with zero downtime.
 
 # 4. How It Works
   Infrastructure Provisioning
